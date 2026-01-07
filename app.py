@@ -59,7 +59,7 @@ def handle_vote(pair_id, winner_filename):
     })
     
     # Sync to Google Sheets every 5 votes to stay under the 429 limit
-    if len(st.session_state.votes_buffer) >= 5:
+    if len(st.session_state.votes_buffer) >= 20:
         sync_to_sheets()
 
     # Move to next image immediately
