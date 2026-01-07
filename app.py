@@ -17,6 +17,8 @@ if "current_idx" not in st.session_state:
     st.session_state.current_idx = 0
 if "votes_buffer" not in st.session_state:
     st.session_state.votes_buffer = [] # Temporary storage to avoid hitting Google API limits
+if "started" not in st.session_state:
+    st.session_state.started = False
 
 # --- DATA LOADING ---
 if not DATA_DIR.exists():
