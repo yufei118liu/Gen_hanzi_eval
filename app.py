@@ -64,9 +64,33 @@ def handle_vote(pair_id, winner_filename):
 
     # Move to next image immediately
     st.session_state.current_idx += 1
-
+    
+def start_experiment():
+    st.session_state.started = True
+    
 # --- UI ---
-if st.session_state.current_idx < TOTAL_PAIRS:
+if not st.session_state.started:
+    st.title("🏯 Hanzi Generation Evaluation")
+    st.markdown(f"""
+    ### Welcome! 
+    Thank you for participating in this study. Your task is to evaluate pairs of generated Chinese characters.
+    
+    **Instructions:**
+    * You will be shown **{TOTAL_PAIRS} pairs** of images side-by-side.
+    * For each pair, click the button under the image that looks **orthographically more natural** to you. 
+    * The rendering of the characters are not perfect. For example, 口 and 一 overlapping can be seen as 日. 
+    * There is no time limit, but please try to follow your first intuition.
+    
+    **⚠️ Important:**
+    * Do **not refresh** your browser page during the test, or your progress will be lost.
+    * Your results will be uploaded automatically once you finish the last pair.
+    
+    Click the button below when you are ready to begin. Thank you for your time!
+    """)
+    
+    st.button("Start Experiment 🚀", on_click=start_experiment, type="primary", use_container_width=True)
+
+elif st.session_state.current_idx < TOTAL_PAIRS:
     current_folder = pair_folders[st.session_state.current_idx]
     pair_id = current_folder.name
     images = sorted([img for img in current_folder.iterdir() if img.suffix.lower() in [".png", ".jpg", ".jpeg"]])
