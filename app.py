@@ -8,7 +8,7 @@ import uuid
 st.set_page_config(page_title="Model Evaluation", layout="wide")
 conn = st.connection("gsheets", type=GSheetsConnection)
 
-DATA_DIR = Path("sample") 
+DATA_DIR = Path("samples") 
 
 # --- INITIALIZE SESSION STATE ---
 if "user_id" not in st.session_state:
