@@ -83,7 +83,8 @@ if not st.session_state.started:
     **Instructions:**
     * You will be shown **{TOTAL_PAIRS} pairs** of images side-by-side.
     * For each pair, click the button under the image that looks **orthographically more natural** to you. 
-    * The rendering of the characters are not perfect. For example, 口 and 一 overlapping can be seen as 日. 
+    * If both options look equally unlikely or unreadable, click the **"Neither looks likely"** button.
+    * The rendering of the characters is not perfect. For example, 口 and 一 overlapping can be seen as 日. 
     * There is no time limit, but please try to follow your first intuition.
     
     **⚠️ Important:**
@@ -106,16 +107,23 @@ elif st.session_state.current_idx < TOTAL_PAIRS:
 
     st.title(f"Pair {st.session_state.current_idx + 1} of {TOTAL_PAIRS}")
     
+    st.title(f"Pair {st.session_state.current_idx + 1} of {TOTAL_PAIRS}")
+    
     col1, col2 = st.columns(2)
     with col1:
-        st.image(str(images[0]), width=400) # Fixed width
-        st.button("Option A", key=f"a_{pair_id}", width=400, on_click=handle_vote, args=(pair_id, images[0].name))
+        st.image(str(images[0]), width=400) 
+        st.button("Choose Option A", key=f"a_{pair_id}", on_click=handle_vote, args=(pair_id, images[0].name), use_container_width=True)
 
     with col2:
-        st.image(str(images[1]), width=400) # Fixed width
-        st.button("Option B", key=f"b_{pair_id}", width=400, on_click=handle_vote, args=(pair_id, images[1].name))
+        st.image(str(images[1]), width=400) 
+        st.button("Choose Option B", key=f"b_{pair_id}", on_click=handle_vote, args=(pair_id, images[1].name), use_container_width=True)
+    
+
+    st.write("")
+    st.button("🚫 Neither looks likely", key=f"neither_{pair_id}", on_click=handle_vote, args=(pair_id, "Neither"), use_container_width=True)
             
     st.progress((st.session_state.current_idx) / TOTAL_PAIRS)
+    
     
     # Show status in sidebar
     if st.session_state.votes_buffer:
