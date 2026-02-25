@@ -121,8 +121,8 @@ if not st.session_state.started:
     st.divider()
     
     st.markdown(f"""**⚠️ Important:**
-    - Do **not refresh** your browser page during the test, or your progress will be lost.
-    - Your results will be uploaded automatically once you finish the last pair.
+    * Do **not refresh** your browser page during the test, or your progress will be lost.
+    * Your results will be uploaded automatically once you finish the last pair.
     
     Click the button below when you are ready to begin. Thank you for your time!
     """)
