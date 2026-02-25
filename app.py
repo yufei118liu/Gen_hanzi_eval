@@ -31,23 +31,26 @@ TOTAL_PAIRS = len(pair_folders)
 
 # --- FUNCTIONS ---
 def sync_to_sheets():
-    """Writes all buffered votes to Google Sheets in one single call"""
     if not st.session_state.votes_buffer:
         return
         
     try:
-        # 1. Prepare the new data
+        # 1. Prepare new data
         df_new = pd.DataFrame(st.session_state.votes_buffer)
         
-        # 2. Read existing data and append
-        existing_df = conn.read(spreadsheet=SHEET_URL, worksheet="Sheet1")
+        # 2. READ WITH TTL=0 (Crucial Fix)
+        # This forces the app to see the votes written by previous batches
+        existing_df = conn.read(spreadsheet=SHEET_URL, worksheet="Sheet1", ttl=0)
+        
+        # 3. Combine
         updated_df = pd.concat([existing_df, df_new], ignore_index=True)
         
-        # 3. Write back to Google (Only 1 API call here)
+        # 4. Write back
         conn.update(spreadsheet=SHEET_URL, worksheet="Sheet1", data=updated_df)
         
-        # 4. Clear the buffer if successful
+        # 5. Clear buffer
         st.session_state.votes_buffer = []
+        st.sidebar.success("✅ Synced successfully!")
     except Exception as e:
         st.sidebar.error(f"Sync delayed: {e}")
 
