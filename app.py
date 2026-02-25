@@ -84,15 +84,14 @@ if not st.session_state.started:
     * You will be shown **{TOTAL_PAIRS} pairs** of images side-by-side.
     * For each pair, click the button under the image that looks **orthographically more natural** to you. 
     * If both options look equally unlikely or unreadable, click the **"Neither looks likely"** button.
-    * The rendering of the characters is not perfect. For example, 口 and 一 overlapping can be seen as 日. 
+    
     * There is no time limit, but please try to follow your first intuition.""")
     
     st.divider()
     
     st.markdown("### 🔍 Understanding the Rendering")
     st.markdown("""
-    The rendering of the characters you will evaluate is not perfect. For example, strokes might overlap in unusual ways (like `口` and `一` overlapping to look like `日`). 
-    
+    The rendering method we used was primitive and the renderings of the characters is not perfect. However, it is not the focus of the study. We apologize for any rendering artifacts, and 
     **Please judge the underlying structure and naturalness, rather than the rendering artifacts.** Here are two examples of what to expect:
     """)
     
