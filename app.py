@@ -85,9 +85,43 @@ if not st.session_state.started:
     * For each pair, click the button under the image that looks **orthographically more natural** to you. 
     * If both options look equally unlikely or unreadable, click the **"Neither looks likely"** button.
     * The rendering of the characters is not perfect. For example, 口 and 一 overlapping can be seen as 日. 
-    * There is no time limit, but please try to follow your first intuition.
+    * There is no time limit, but please try to follow your first intuition.""")
     
-    **⚠️ Important:**
+    st.divider()
+    
+    st.markdown("### 🔍 Understanding the Rendering")
+    st.markdown("""
+    The rendering of the characters you will evaluate is not perfect. For example, strokes might overlap in unusual ways (like `口` and `一` overlapping to look like `日`). 
+    
+    **Please judge the underlying structure and naturalness, rather than the rendering artifacts.** Here are two examples of what to expect:
+    """)
+    
+    
+    # --- Example Pair 1 ---
+    st.markdown("##### Example 1")
+    ex1_col1, ex1_col2 = st.columns(2)
+    with ex1_col1:
+        st.markdown("*Perfect Rendering*")
+        st.image("perfect_example_1.png", width=250) # Update path
+    with ex1_col2:
+        st.markdown("*Our Rendering*")
+        st.image("rendered_example_1.png", width=250) # Update path
+
+    st.write("") # Adds a little vertical breathing room
+
+    # --- Example Pair 2 ---
+    st.markdown("##### Example 2")
+    ex2_col1, ex2_col2 = st.columns(2)
+    with ex2_col1:
+        st.markdown("*Perfect Rendering*")
+        st.image("perfect_example_2.png", width=250) # Update path
+    with ex2_col2:
+        st.markdown("*Our Rendering*")
+        st.image("rendered_example_2.png", width=250) # Update path
+        
+    st.divider()
+    
+    st.markdown(f"""**⚠️ Important:**
     * Do **not refresh** your browser page during the test, or your progress will be lost.
     * Your results will be uploaded automatically once you finish the last pair.
     
