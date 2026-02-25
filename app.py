@@ -91,8 +91,8 @@ if not st.session_state.started:
     
     st.markdown("### 🔍 Understanding the Rendering")
     st.markdown("""
-    The rendering method we used was primitive and the renderings of the characters is not perfect. However, it is not the focus of the study. We apologize for any rendering artifacts, and 
-    **Please judge the underlying structure and naturalness, rather than the rendering artifacts.** Here are two examples of what to expect:
+    The rendering method we used was primitive and the renderings of the characters are not perfect nor standard. However, it is not the focus of the study. We apologize for any rendering artifacts, and 
+    **please judge the underlying structure and naturalness, rather than the rendering artifacts.** Here are two examples of what to expect:
     """)
     
     
@@ -121,8 +121,8 @@ if not st.session_state.started:
     st.divider()
     
     st.markdown(f"""**⚠️ Important:**
-    * Do **not refresh** your browser page during the test, or your progress will be lost.
-    * Your results will be uploaded automatically once you finish the last pair.
+    - Do **not refresh** your browser page during the test, or your progress will be lost.
+    - Your results will be uploaded automatically once you finish the last pair.
     
     Click the button below when you are ready to begin. Thank you for your time!
     """)
