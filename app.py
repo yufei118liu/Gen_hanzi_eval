@@ -2,6 +2,14 @@ import streamlit as st
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 from pathlib import Path
+import threading
+
+# Cache the lock so it is shared across all user sessions
+@st.cache_resource
+def get_sync_lock():
+    return threading.Lock()
+
+sync_lock = get_sync_lock()
 
 # --- CONFIGURATION ---
 st.set_page_config(page_title="Model Evaluation", layout="wide")
@@ -35,19 +43,25 @@ TOTAL_PAIRS = len(pair_folders)
 TOTAL_SECTIONS = (TOTAL_PAIRS + SECTION_SIZE - 1) // SECTION_SIZE
 
 # --- FUNCTIONS ---
+
 def sync_to_sheets():
     if not st.session_state.votes_buffer:
         return
 
     try:
-        df_new = pd.DataFrame(st.session_state.votes_buffer)
-        existing_df = conn.read(spreadsheet=SHEET_URL, worksheet="Sheet1", ttl=0)
-        updated_df = pd.concat([existing_df, df_new], ignore_index=True)
-        conn.update(spreadsheet=SHEET_URL, worksheet="Sheet1", data=updated_df)
+        # The lock ensures only one user can execute this block at a time
+        with sync_lock: 
+            df_new = pd.DataFrame(st.session_state.votes_buffer)
+            existing_df = conn.read(spreadsheet=SHEET_URL, worksheet="Sheet1", ttl=0)
+            updated_df = pd.concat([existing_df, df_new], ignore_index=True)
+            conn.update(spreadsheet=SHEET_URL, worksheet="Sheet1", data=updated_df)
+            
+        # Clear buffer AFTER successful sync
         st.session_state.votes_buffer = []
         st.sidebar.success("Synced successfully!")
     except Exception as e:
         st.sidebar.error(f"Sync delayed: {e}")
+        
 
 def handle_vote(pair_id, winner_filename):
     st.session_state.votes_buffer.append({
