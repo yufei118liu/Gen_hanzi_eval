@@ -16,7 +16,6 @@ st.set_page_config(page_title="Model Evaluation", layout="wide")
 SHEET_URL = st.secrets["connections"]["gsheets"]["spreadsheet"]
 conn = st.connection("gsheets", type=GSheetsConnection)
 DATA_DIR = Path("samples")
-SECTION_SIZE = 46  # 5 sections of 46 pairs = 230 total
 
 # --- INITIALIZE SESSION STATE ---
 if "user_id" not in st.session_state:
@@ -27,8 +26,6 @@ if "votes_buffer" not in st.session_state:
     st.session_state.votes_buffer = []
 if "started" not in st.session_state:
     st.session_state.started = False
-if "section_break" not in st.session_state:
-    st.session_state.section_break = False
 if "saved_and_exited" not in st.session_state:
     st.session_state.saved_and_exited = False
 
@@ -40,7 +37,6 @@ if not DATA_DIR.exists():
 pair_folders = sorted([f for f in DATA_DIR.iterdir() if f.is_dir()],
                       key=lambda x: int(''.join(filter(str.isdigit, x.name)) or 0))
 TOTAL_PAIRS = len(pair_folders)
-TOTAL_SECTIONS = (TOTAL_PAIRS + SECTION_SIZE - 1) // SECTION_SIZE
 
 # --- FUNCTIONS ---
 
@@ -71,17 +67,11 @@ def handle_vote(pair_id, winner_filename):
         "timestamp": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
     })
 
+    st.session_state.current_idx += 1
+
     # Sync every 5 votes to minimize data loss
     if len(st.session_state.votes_buffer) >= 5:
         sync_to_sheets()
-
-    st.session_state.current_idx += 1
-
-    # Check if we hit a section boundary (but not the very end)
-    if (st.session_state.current_idx % SECTION_SIZE == 0
-            and st.session_state.current_idx < TOTAL_PAIRS):
-        sync_to_sheets()
-        st.session_state.section_break = True
 
 def start_experiment():
     user_id = st.session_state.user_id_input.strip()
@@ -101,20 +91,16 @@ def start_experiment():
 
     st.session_state.started = True
 
-def continue_section():
-    st.session_state.section_break = False
-
 def save_and_exit():
     sync_to_sheets()
     st.session_state.saved_and_exited = True
-    st.session_state.section_break = False
 
 # --- UI ---
 if not st.session_state.started:
     st.title("Hanzi Generation Evaluation")
     st.markdown(f"""
     For each pair, pick the character that looks **more natural**, or choose **"Neither"**.
-    The test has **{TOTAL_SECTIONS} sections** ({SECTION_SIZE} pairs each) — you can take breaks between sections.
+    The test has **{TOTAL_PAIRS} pairs** — you can save your progress and come back anytime.
 
     **Note on rendering:** Our renderings are imperfect. Please judge **structure and naturalness**, not rendering artifacts. Examples below:
     """)
@@ -148,18 +134,6 @@ elif st.session_state.saved_and_exited:
     st.success(f"Your progress has been saved. You have completed {st.session_state.current_idx} of {TOTAL_PAIRS} pairs.")
     st.info(f"Your User ID is: **{st.session_state.user_id}**\n\nPlease remember this ID. When you are ready to continue, come back and enter the same ID to resume.")
 
-elif st.session_state.section_break:
-    current_section = st.session_state.current_idx // SECTION_SIZE
-    st.title(f"Section {current_section} of {TOTAL_SECTIONS} Complete!")
-    st.success(f"You have completed {st.session_state.current_idx} of {TOTAL_PAIRS} pairs.")
-    st.markdown("You can continue to the next section, or save your progress and come back later.")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        st.button("Continue to Next Section", on_click=continue_section, type="primary", use_container_width=True)
-    with col2:
-        st.button("Save & Exit", on_click=save_and_exit, use_container_width=True)
-
 elif st.session_state.current_idx < TOTAL_PAIRS:
     current_folder = pair_folders[st.session_state.current_idx]
     pair_id = current_folder.name
@@ -169,9 +143,7 @@ elif st.session_state.current_idx < TOTAL_PAIRS:
         st.session_state.current_idx += 1
         st.rerun()
 
-    current_section = st.session_state.current_idx // SECTION_SIZE + 1
-    idx_in_section = st.session_state.current_idx % SECTION_SIZE + 1
-    st.title(f"Section {current_section}/{TOTAL_SECTIONS} — Pair {idx_in_section} of {SECTION_SIZE}")
+    st.title(f"Pair {st.session_state.current_idx + 1} of {TOTAL_PAIRS}")
 
     col1, col2 = st.columns(2)
     with col1:
@@ -187,6 +159,7 @@ elif st.session_state.current_idx < TOTAL_PAIRS:
 
     st.progress(st.session_state.current_idx / TOTAL_PAIRS)
 
+    st.sidebar.button("Save & Exit", on_click=save_and_exit, use_container_width=True)
     if st.session_state.votes_buffer:
         st.sidebar.write(f"{len(st.session_state.votes_buffer)} votes waiting to sync...")
 
