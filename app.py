@@ -104,25 +104,32 @@ if not st.session_state.started:
 
     **Note on rendering:** Our renderings are imperfect. Please judge **structure and naturalness**, not rendering artifacts. Examples below:
     """)
+    st.markdown(f"""
+    对于每一对字符，请选择**看起来更自然**的那个，或选择**"两者都不像"**。
+    测试共有 **{TOTAL_PAIRS} 对** — 您可以随时保存进度，稍后继续。
+
+    **关于渲染的说明：** 我们的渲染并不完美。请根据**结构和自然度**进行判断，忽略渲染瑕疵。示例如下：
+    """)
 
     ex_col1, ex_col2, ex_col3, ex_col4 = st.columns(4)
     with ex_col1:
-        st.caption("Perfect")
+        st.caption("Perfect / 标准")
         st.image("perfect_example_1.png", width=180)
     with ex_col2:
-        st.caption("Our rendering")
+        st.caption("Our rendering / 我们的渲染")
         st.image("rendered_example_1.png", width=180)
     with ex_col3:
-        st.caption("Perfect")
+        st.caption("Perfect / 标准")
         st.image("perfect_example_2.png", width=180)
     with ex_col4:
-        st.caption("Our rendering")
+        st.caption("Our rendering / 我们的渲染")
         st.image("rendered_example_2.png", width=180)
 
     st.divider()
 
     st.text_input("Enter your User ID to start (or re-enter to resume):", key="user_id_input")
     st.caption("Remember this ID — you'll need it to resume after a break.")
+    st.caption("请记住此 ID — 休息后继续时需要用到它。")
 
     if st.session_state.get("user_id_input", "").strip():
         st.button("Start Experiment", on_click=start_experiment, type="primary", use_container_width=True)
@@ -133,6 +140,9 @@ elif st.session_state.saved_and_exited:
     st.title("Progress Saved!")
     st.success(f"Your progress has been saved. You have completed {st.session_state.current_idx} of {TOTAL_PAIRS} pairs.")
     st.info(f"Your User ID is: **{st.session_state.user_id}**\n\nPlease remember this ID. When you are ready to continue, come back and enter the same ID to resume.")
+    st.markdown("---")
+    st.markdown(f"**进度已保存！** 您已完成 {st.session_state.current_idx} / {TOTAL_PAIRS} 对。")
+    st.info(f"您的用户 ID 是：**{st.session_state.user_id}**\n\n请记住此 ID。准备好继续时，重新打开页面并输入相同的 ID 即可恢复进度。")
 
 elif st.session_state.current_idx < TOTAL_PAIRS:
     current_folder = pair_folders[st.session_state.current_idx]
@@ -148,18 +158,18 @@ elif st.session_state.current_idx < TOTAL_PAIRS:
     col1, col2 = st.columns(2)
     with col1:
         st.image(str(images[0]), width=400)
-        st.button("Choose Option A", key=f"a_{pair_id}", on_click=handle_vote, args=(pair_id, images[0].name), use_container_width=True)
+        st.button("Choose Option A / 选择 A", key=f"a_{pair_id}", on_click=handle_vote, args=(pair_id, images[0].name), use_container_width=True)
 
     with col2:
         st.image(str(images[1]), width=400)
-        st.button("Choose Option B", key=f"b_{pair_id}", on_click=handle_vote, args=(pair_id, images[1].name), use_container_width=True)
+        st.button("Choose Option B / 选择 B", key=f"b_{pair_id}", on_click=handle_vote, args=(pair_id, images[1].name), use_container_width=True)
 
     st.write("")
-    st.button("Neither looks likely", key=f"neither_{pair_id}", on_click=handle_vote, args=(pair_id, "Neither"), use_container_width=True)
+    st.button("Neither looks likely / 两者都不像", key=f"neither_{pair_id}", on_click=handle_vote, args=(pair_id, "Neither"), use_container_width=True)
 
     st.progress(st.session_state.current_idx / TOTAL_PAIRS)
 
-    st.sidebar.button("Save & Exit", on_click=save_and_exit, use_container_width=True)
+    st.sidebar.button("Save & Exit / 保存并退出", on_click=save_and_exit, use_container_width=True)
     if st.session_state.votes_buffer:
         st.sidebar.write(f"{len(st.session_state.votes_buffer)} votes waiting to sync...")
 
@@ -167,4 +177,5 @@ else:
     with st.spinner("Saving your final results..."):
         sync_to_sheets()
     st.success("All evaluations complete! Thank you.")
+    st.success("所有评估已完成！谢谢您的参与。")
     st.balloons()
