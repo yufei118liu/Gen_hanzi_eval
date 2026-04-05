@@ -99,13 +99,13 @@ def save_and_exit():
 if not st.session_state.started:
     st.title("Hanzi Generation Evaluation")
     st.markdown(f"""
-    For each pair, pick the character that looks **more natural**, or choose **"Neither"**.
+    For each pair, pick the character that looks **more natural**, or choose **"Neither"** only if necessary.
     The test has **{TOTAL_PAIRS} pairs** — you can save your progress and come back anytime.
 
     **Note on rendering:** Our renderings are imperfect. Please judge **structure and naturalness**, not rendering artifacts. Examples below:
     """)
     st.markdown(f"""
-    对于每一对字符，请选择**看起来更自然**的那个，或选择**"两者都不像"**。
+    对于每一对字符，请选择**看起来更自然**的那个，仅在必要时才选择**"两者都不像"**。
     测试共有 **{TOTAL_PAIRS} 对** — 您可以随时保存进度，稍后继续。
 
     **关于渲染的说明：** 我们的渲染并不完美。请根据**结构和自然度**进行判断，忽略渲染瑕疵。示例如下：
